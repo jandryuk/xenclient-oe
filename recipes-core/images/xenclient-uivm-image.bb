@@ -5,7 +5,8 @@ IMAGE_FEATURES += "package-management"
 
 COMPATIBLE_MACHINE = "(xenclient-uivm)"
 
-IMAGE_FSTYPES = "xc.ext3.vhd.gz"
+VM_ROOTFS_TYPE ?= "ext3"
+IMAGE_FSTYPES = "vhd.gz"
 
 BAD_RECOMMENDATIONS += "avahi-daemon avahi-autoipd"
 # The above seems to be broken and we *really* don't want avahi!
