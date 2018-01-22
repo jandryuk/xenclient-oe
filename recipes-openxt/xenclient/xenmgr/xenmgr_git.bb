@@ -14,6 +14,7 @@ SRC_URI = "git://${OPENXT_GIT_MIRROR}/manager.git;protocol=${OPENXT_GIT_PROTOCOL
 SRC_URI += "file://xenmgr_dbus.conf \
             file://xenstore-init-extra \
             file://xenmgr.initscript \
+            file://no-graphic.patch \
 "
 
 S = "${WORKDIR}/git/xenmgr"

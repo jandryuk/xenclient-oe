@@ -1,0 +1,29 @@
+Index: xenmgr/Vm/Config.hs
+===================================================================
+--- xenmgr.orig/Vm/Config.hs
++++ xenmgr/Vm/Config.hs
+@@ -645,7 +645,7 @@ unswizzleMac mac = let bytes = macToByte
+                        h     = (head bytes) .&. 253
+                     in bytesToMac $ h : tail bytes
+ 
+-data Display = VNC | Other
++data Display = VNC | Nogfx | Other
+ -- Next section: information about PCI Passthrough Devices
+ pciSpecs :: VmConfig -> Rpc [PciSpec]
+ pciSpecs cfg = do
+@@ -654,6 +654,7 @@ pciSpecs cfg = do
+ 
+     display_str <- readConfigProperty uuid vmDisplay
+     let display = case display_str of
++                    Just ('n':'o':'g':'f':'x':_) -> Nogfx
+                     Just ('v':'n':'c':_) -> VNC
+                     _                    -> Other
+ 
+@@ -688,6 +689,7 @@ pciSpecs cfg = do
+          | null (vgpuPciPtDevices vgpu) = [ "extra-hvm=vgpu", xengfx, "extra-hvm=surfman=" ]
+          | otherwise                    = [ "extra-hvm=gfx_passthru=", "extra-hvm=surfman=" ]
+      vgaopts' VGAEmu _       VNC         = [ xengfx ]
++     vgaopts' VGAEmu _       Nogfx       = [ "extra-hvm=nographic=" ]
+      vgaopts' VGAEmu _       _           = [ xengfx, "extra-hvm=surfman=" ]
+ 
+ -- Extra HVM parameters from database
