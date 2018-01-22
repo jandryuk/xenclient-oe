@@ -19,4 +19,4 @@ tmpfs           /var/lib/NetworkManager                 tmpfs  defaults,rootcont
 xenfs		/proc/xen				xenfs  defaults								0  0
 
 
-/dev/xvda2      none                                    swap   sw								0  0
+/dev/xvdb      none                                    swap   sw								0  0
