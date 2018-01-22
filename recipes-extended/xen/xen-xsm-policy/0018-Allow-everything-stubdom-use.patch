@@ -1,0 +1,114 @@
+From d2b991e5750922136997e7979f8c931820dee5a7 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Mon, 15 Jan 2018 11:15:38 -0500
+Subject: [PATCH 18/19] Allow everything stubdom use
+
+With everything being an HVM, give everything stubdom permissions.
+Place event channel type definitions into their parent's module.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ policy/modules/xen/ndvm.te   | 10 ++++++++++
+ policy/modules/xen/syncvm.te | 10 ++++++++++
+ policy/modules/xen/uivm.te   | 10 ++++++++++
+ 3 files changed, 30 insertions(+)
+
+diff --git a/policy/modules/xen/ndvm.te b/policy/modules/xen/ndvm.te
+index 349db0c..a6c4688 100644
+--- a/policy/modules/xen/ndvm.te
++++ b/policy/modules/xen/ndvm.te
+@@ -36,6 +36,15 @@ type dom0-ndvm_evchn_t;
+ xen_event_type(dom0-ndvm_evchn_t)
+ dom0_event_src(ndvm_t, dom0-ndvm_evchn_t)
+
++#types for event channel between ndvm and stubdom
++type ndvm-stubdom_evchn_t;
++xen_event_type(ndvm-stubdom_evchn_t)
++stubdom_event_dst(ndvm_t, ndvm-stubdom_evchn_t)
++
++type stubdom-ndvm_evchn_t;
++xen_event_type(stubdom-ndvm_evchn_t)
++stubdom_event_src(ndvm_t, stubdom-ndvm_evchn_t)
++
+ ########################################
+ #
+ # Local Policy
+@@ -50,6 +59,7 @@ iomem_use_resource_iommu_nointremap(ndvm_t)
+ pirq_remove_resource(ndvm_t)
+ pirq_use_resource_iommu_nointremap(ndvm_t)
+ syncvm_remove_resource(ndvm_t)
++stubdom_ioemu(ndvm_t)
+ uivm_send_v4v(ndvm_t)
+ xen_write_console(ndvm_t)
+ dom0_map_write_grant(ndvm_t)
+diff --git a/policy/modules/xen/syncvm.te b/policy/modules/xen/syncvm.te
+index d287c80..e506e84 100644
+--- a/policy/modules/xen/syncvm.te
++++ b/policy/modules/xen/syncvm.te
+@@ -44,6 +44,15 @@ type ndvm-syncvm_evchn_t;
+ xen_event_type(ndvm-syncvm_evchn_t)
+ ndvm_event_src(syncvm_t, ndvm-syncvm_evchn_t)
+
++#types for event channel between syncvm and stubdom
++type syncvm-stubdom_evchn_t;
++xen_event_type(syncvm-stubdom_evchn_t)
++stubdom_event_dst(syncvm_t, syncvm-stubdom_evchn_t)
++
++type stubdom-syncvm_evchn_t;
++xen_event_type(stubdom-syncvm_evchn_t)
++stubdom_event_src(syncvm_t, stubdom-syncvm_evchn_t)
++
+ ########################################
+ #
+ # Sync VM local policy
+@@ -53,4 +62,5 @@ ndvm_use(syncvm_t)
+ ndvm_copy_grant(syncvm_t)
+ dom0_recv_v4v(syncvm_t)
+ dom0_send_v4v(syncvm_t)
++stubdom_ioemu(syncvm_t)
+ xen_write_console(syncvm_t)
+diff --git a/policy/modules/xen/uivm.te b/policy/modules/xen/uivm.te
+index 7b2d1b3..997b725 100644
+--- a/policy/modules/xen/uivm.te
++++ b/policy/modules/xen/uivm.te
+@@ -36,6 +36,15 @@ type dom0-uivm_evchn_t;
+ xen_event_type(dom0-uivm_evchn_t)
+ dom0_event_src(uivm_t, dom0-uivm_evchn_t)
+
++#types for event channel between uivm and stubdom
++type uivm-stubdom_evchn_t;
++xen_event_type(uivm-stubdom_evchn_t)
++stubdom_event_dst(uivm_t, uivm-stubdom_evchn_t)
++
++type stubdom-uivm_evchn_t;
++xen_event_type(stubdom-uivm_evchn_t)
++stubdom_event_src(uivm_t, stubdom-uivm_evchn_t)
++
+ ########################################
+ #
+ # UIVM local policy
+@@ -44,4 +53,5 @@ dom0_event_src(uivm_t, dom0-uivm_evchn_t
+ dom0_send_v4v(uivm_t)
+ ndvm_send_v4v(uivm_t)
+ iomem_map_read_mmu(uivm_t)
++stubdom_ioemu(uivm_t)
+ xen_write_console(uivm_t)
+diff --git a/policy/modules/xen/stubdom.te b/policy/modules/xen/stubdom.te
+index 7b2d1b3..997b725 100644
+--- a/policy/modules/xen/stubdom.te
++++ b/policy/modules/xen/stubdom.te
+@@ -35,14 +35,6 @@ type dom0-stubdom_evchn_t;
+ xen_event_type(dom0-stubdom_evchn_t)
+ dom0_event_src(stubdom_t, dom0-stubdom_evchn_t)
+ 
+-type stubdom-ndvm_evchn_t;
+-xen_event_type(stubdom-ndvm_evchn_t)
+-ndvm_event_dst(stubdom_t, stubdom-ndvm_evchn_t)
+-
+-type ndvm-stubdom_evchn_t;
+-xen_event_type(ndvm-stubdom_evchn_t)
+-ndvm_event_src(stubdom_t, ndvm-stubdom_evchn_t)
+-
+ #types for event channel between stubdom and nilfvm
+ type nilfvm-stubdom_evchn_t;
+ xen_event_type(nilfvm-stubdom_evchn_t)

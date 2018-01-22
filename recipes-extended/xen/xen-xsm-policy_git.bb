@@ -9,7 +9,11 @@ S = "${WORKDIR}/git"
 PV = "${XEN_VERSION}+git${SRCPV}"
 
 SRCREV = "${AUTOREV}"
-SRC_URI = "git://${OPENXT_GIT_MIRROR}/xsm-policy.git;protocol=${OPENXT_GIT_PROTOCOL};branch=${OPENXT_BRANCH}"
+SRC_URI = "git://${OPENXT_GIT_MIRROR}/xsm-policy.git;protocol=${OPENXT_GIT_PROTOCOL};branch=${OPENXT_BRANCH} \
+           file://0015-Enable-HVM-domains.patch \
+           file://0018-Allow-everything-stubdom-use.patch \
+           file://0019-Move-HVM-self-permissions-into-interface.patch \
+           "
 
 FILES_${PN} += "/etc/xen/refpolicy/policy/policy.24"
 

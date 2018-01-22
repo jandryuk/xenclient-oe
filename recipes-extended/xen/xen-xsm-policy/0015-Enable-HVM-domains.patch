@@ -1,0 +1,54 @@
+From b31fc5fd894fe1da5056a51941d2741ea12e7f10 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Mon, 15 Jan 2018 09:56:52 -0500
+Subject: [PATCH 15/19] Enable HVM domains
+
+We're running as HVM domains, so give them the associated type info.
+Leave the pv type as well to allow compatibility for the time being.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ policy/modules/xen/ndvm.te    | 1 +
+ policy/modules/xen/syncvm.te  | 1 +
+ policy/modules/xen/uivm.te    | 1 +
+ 6 files changed, 6 insertions(+)
+
+diff --git a/policy/modules/xen/ndvm.te b/policy/modules/xen/ndvm.te
+index 2119982..68f71c1 100644
+--- a/policy/modules/xen/ndvm.te
++++ b/policy/modules/xen/ndvm.te
+@@ -26,6 +26,7 @@ policy_module(ndvm, 0.2)
+ type ndvm_t;
+ xen_domain_type(ndvm_t)
+ xen_pv_type(ndvm_t)
++xen_hvm_type(ndvm_t)
+ 
+ type ndvm-dom0_evchn_t;
+ xen_event_type(ndvm-dom0_evchn_t)
+diff --git a/policy/modules/xen/syncvm.te b/policy/modules/xen/syncvm.te
+index 37a22a0..4ee8899 100644
+--- a/policy/modules/xen/syncvm.te
++++ b/policy/modules/xen/syncvm.te
+@@ -26,6 +26,7 @@ policy_module(syncvm, 0.2)
+ type syncvm_t;
+ xen_domain_type(syncvm_t)
+ xen_pv_type(syncvm_t)
++xen_hvm_type(syncvm_t)
+ 
+ type syncvm-dom0_evchn_t;
+ xen_event_type(syncvm-dom0_evchn_t)
+diff --git a/policy/modules/xen/uivm.te b/policy/modules/xen/uivm.te
+index e98a069..4ceeef3 100644
+--- a/policy/modules/xen/uivm.te
++++ b/policy/modules/xen/uivm.te
+@@ -26,6 +26,7 @@ policy_module(uivm, 0.2)
+ type uivm_t;
+ xen_domain_type(uivm_t)
+ xen_pv_type(uivm_t)
++xen_hvm_type(uivm_t)
+ 
+ type uivm-dom0_evchn_t;
+ xen_event_type(uivm-dom0_evchn_t)
+-- 
+2.1.4
+
