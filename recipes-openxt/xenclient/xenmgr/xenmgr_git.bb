@@ -15,6 +15,8 @@ SRC_URI += "file://xenmgr_dbus.conf \
             file://xenstore-init-extra \
             file://xenmgr.initscript \
             file://no-graphic.patch \
+            file://new-vm-ndvm \
+            file://service-ndvm \
 "
 
 S = "${WORKDIR}/git/xenmgr"
@@ -59,5 +61,7 @@ do_install() {
     install -m 0755 -d ${D}/usr/share/xenmgr-1.0/templates
     install -m 0755 -d ${D}/usr/share/xenmgr-1.0/templates/default
     install -m 0644 ${S}/../templates/default/* ${D}/usr/share/xenmgr-1.0/templates/default/
-}
 
+    install -m 0644 ${WORKDIR}/new-vm-ndvm ${D}/usr/share/xenmgr-1.0/templates/default/
+    install -m 0644 ${WORKDIR}/service-ndvm ${D}/usr/share/xenmgr-1.0/templates/default/
+}
