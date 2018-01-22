@@ -67,6 +67,14 @@ export INTEL_DBUS=1
 
 rsyslogd -f /etc/rsyslog.conf -c4
 
+mkfifo /var/log/guest.log
+
+(
+while read line ; do
+	echo "guest: $line" > /dev/hvc0
+done < /var/log/guest.log
+) &
+
 # Agent cmdline parsing.
 KERNEL_CMDLINE=`cat /proc/cmdline`
 for arg in $KERNEL_CMDLINE; do
