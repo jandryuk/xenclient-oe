@@ -9,6 +9,7 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/dm-agent:"
 
 SRC_URI = "git://${OPENXT_GIT_MIRROR}/dm-agent.git;protocol=${OPENXT_GIT_PROTOCOL};branch=${OPENXT_BRANCH} \
             file://dm-agent.initscript \
+            file://no-graphic.patch \
            "
 
 S = "${WORKDIR}/git"

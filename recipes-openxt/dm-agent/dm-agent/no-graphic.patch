@@ -1,0 +1,26 @@
+diff --git a/src/qemu-device.c b/src/qemu-device.c
+index 12e3419..e135976 100644
+--- a/src/qemu-device.c
++++ b/src/qemu-device.c
+@@ -159,6 +159,21 @@ cdromdevice:
+ 
+ qemu_device_init (cdrom, cdrom_device_parse_options);
+ 
++static bool nographic_device_parse_options (struct device_model *devmodel,
++                                       const char *device)
++{
++    (void) device;
++
++    SPAWN_ADD_ARG (devmodel, "-vga");
++    SPAWN_ADD_ARG (devmodel, "none");
++    SPAWN_ADD_ARG (devmodel, "-display");
++    SPAWN_ADD_ARG (devmodel, "none");
++
++    return true;
++}
++
++qemu_device_init (nographic, nographic_device_parse_options);
++
+ static bool net_device_parse_options (struct device_model *devmodel,
+                                       const char *device)
+ {
