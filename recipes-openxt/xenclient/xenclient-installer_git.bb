@@ -12,6 +12,7 @@ SRC_URI = "git://${OPENXT_GIT_MIRROR}/installer.git;protocol=${OPENXT_GIT_PROTOC
           file://new-busybox-dialog.patch \
           file://change-dom0-size.patch \
           file://new-fdisk-tweaks.patch \
+          file://tapdisk-tweak.patch \
           "
 
 S = "${WORKDIR}/git"

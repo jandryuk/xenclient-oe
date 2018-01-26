@@ -1,0 +1,33 @@
+From 87682bc4e47ed4603ac195b1dfaf4381ecbef7c8 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 27 Oct 2017 13:10:22 -0400
+Subject: [PATCH] create_swap_vhd: Loop trying to destroy tapdev
+
+With the Xen 4.6 uprev and associated change to Xen's in-tree blktap2,
+tap-ctl destroy often fails to destroy the uivm swap tapdev.  Try to
+hack around this issues by looping the destroy.
+---
+ part2/stages/Functions/install-main | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/part2/stages/Functions/install-main b/part2/stages/Functions/install-main
+index 2231288..4465aa4 100644
+--- a/part2/stages/Functions/install-main
++++ b/part2/stages/Functions/install-main
+@@ -808,8 +808,12 @@ create_swap_vhd()
+         return 1
+     fi
+ 
+-    do_cmd sync >&2
+-    do_cmd tap-ctl destroy -d "${DEV}" >&2
++    for i in $( seq 20 ); do
++        echo loop ${i} tap-ctl destroy -d "${DEV}" >&2
++        do_cmd sleep 1 >&2
++        do_cmd sync >&2
++        do_cmd tap-ctl destroy -d "${DEV}" >&2 && return 0
++    done
+ }
+ 
+ install_file()
+--
+libgit2 0.26.0
