@@ -46,6 +46,7 @@ SRCREV = "${AUTOREV}"
 SRC_URI = "git://${OPENXT_GIT_MIRROR}/toolstack.git;protocol=${OPENXT_GIT_PROTOCOL};branch=${OPENXT_BRANCH}	\
            file://vif \
            file://xenstored.initscript \
+           file://toolstack-nographic.patch \
            "
 
 PACKAGE_ARCH = "${MACHINE_ARCH}"

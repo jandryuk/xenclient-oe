@@ -1,0 +1,46 @@
+From d86b960066bef40341dadc1373426242c30e0034 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Thu, 25 Jan 2018 10:13:28 -0500
+Subject: [PATCH] Support disabling graphic for HVMs
+
+dm-agent will disable graphics in qemu (-vga none -display none) when
+passed nographic, so add support for doing so.
+
+While at it, disable xenmou when graphics are disabled.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ xenops/dmagent.ml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/xenops/dmagent.ml b/xenops/dmagent.ml
+index 04e0e1d..3700ba4 100644
+--- a/xenops/dmagent.ml
++++ b/xenops/dmagent.ml
+@@ -268,6 +268,7 @@ let device_list =
+ 		"xengfx";
+ 		"vgpu";
+ 		"gfx";
++		"nographic";
+ 		"acpi";
+ 		"audio";
+ 		"serial";
+@@ -284,13 +285,14 @@ let device_list =
+ let need_device info device =
+ 	match device with
+ 	| "xenfb" | "input" -> not info.Dm.hvm
+-	| "xenmou" -> info.Dm.hvm
++	| "xenmou" -> info.Dm.hvm && not ( in_extras "nographic" info)
+ 	| "xen_acpi_pm" -> info.Dm.hvm
+ 	| "xen_pci_pt" -> info.Dm.hvm
+ 	| "svga" -> info.Dm.hvm && in_extras "std-vga" info
+ 	| "xengfx" -> info.Dm.hvm && in_extras "xengfx" info
+ 	| "vgpu" -> info.Dm.hvm && in_extras "vgpu" info
+ 	| "gfx" -> info.Dm.hvm && in_extras "gfx_passthru" info
++	| "nographic" -> info.Dm.hvm && in_extras "nographic" info
+ 	| "acpi" -> info.Dm.hvm && info.Dm.acpi
+ 	| "audio" -> info.Dm.hvm && is_some info.Dm.sound
+ 	| "serial" -> info.Dm.hvm && info.Dm.serial <> ""
+-- 
+2.1.4
+
