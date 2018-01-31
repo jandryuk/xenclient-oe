@@ -29,10 +29,8 @@ INTERNAL DEPENDENCIES
 ################################################################################
 PATCHES 
 ################################################################################
-Index: xen-4.6.6/xen/arch/x86/hvm/hvm.c
-===================================================================
---- xen-4.6.6.orig/xen/arch/x86/hvm/hvm.c
-+++ xen-4.6.6/xen/arch/x86/hvm/hvm.c
+--- a/xen/arch/x86/hvm/hvm.c
++++ b/xen/arch/x86/hvm/hvm.c
 @@ -5153,6 +5153,7 @@ static hvm_hypercall_t *const hvm_hyperc
      HYPERCALL(sysctl),
      HYPERCALL(domctl),
@@ -49,10 +47,8 @@ Index: xen-4.6.6/xen/arch/x86/hvm/hvm.c
      [ __HYPERVISOR_arch_1 ] = (hvm_hypercall_t *)paging_domctl_continuation
  };
  
-Index: xen-4.6.6/xen/arch/x86/x86_64/compat/entry.S
-===================================================================
---- xen-4.6.6.orig/xen/arch/x86/x86_64/compat/entry.S
-+++ xen-4.6.6/xen/arch/x86/x86_64/compat/entry.S
+--- a/xen/arch/x86/x86_64/compat/entry.S
++++ b/xen/arch/x86/x86_64/compat/entry.S
 @@ -507,7 +507,7 @@ ENTRY(compat_hypercall_table)
          .quad do_domctl
          .quad compat_kexec_op
@@ -71,10 +67,8 @@ Index: xen-4.6.6/xen/arch/x86/x86_64/compat/entry.S
          .byte 2 /* do_xenpmu_op             */  /* 40 */
          .rept __HYPERVISOR_arch_0-(.-compat_hypercall_args_table)
          .byte 0 /* compat_ni_hypercall      */
-Index: xen-4.6.6/xen/arch/x86/x86_64/entry.S
-===================================================================
---- xen-4.6.6.orig/xen/arch/x86/x86_64/entry.S
-+++ xen-4.6.6/xen/arch/x86/x86_64/entry.S
+--- a/xen/arch/x86/x86_64/entry.S
++++ b/xen/arch/x86/x86_64/entry.S
 @@ -822,7 +822,7 @@ ENTRY(hypercall_table)
          .quad do_domctl
          .quad do_kexec_op
@@ -93,10 +87,8 @@ Index: xen-4.6.6/xen/arch/x86/x86_64/entry.S
          .byte 2 /* do_xenpmu_op         */  /* 40 */
          .rept __HYPERVISOR_arch_0-(.-hypercall_args_table)
          .byte 0 /* do_ni_hypercall      */
-Index: xen-4.6.6/xen/common/Makefile
-===================================================================
---- xen-4.6.6.orig/xen/common/Makefile
-+++ xen-4.6.6/xen/common/Makefile
+--- a/xen/common/Makefile
++++ b/xen/common/Makefile
 @@ -49,6 +49,7 @@ obj-y += timer.o
  obj-y += tmem.o
  obj-y += tmem_xen.o
@@ -105,10 +97,8 @@ Index: xen-4.6.6/xen/common/Makefile
  obj-y += version.o
  obj-y += vm_event.o
  obj-y += vmap.o
-Index: xen-4.6.6/xen/common/domain.c
-===================================================================
---- xen-4.6.6.orig/xen/common/domain.c
-+++ xen-4.6.6/xen/common/domain.c
+--- a/xen/common/domain.c
++++ b/xen/common/domain.c
 @@ -253,7 +253,8 @@ struct domain *domain_create(domid_t dom
  {
      struct domain *d, **pd, *old_hwdom = NULL;
@@ -155,10 +145,8 @@ Index: xen-4.6.6/xen/common/domain.c
          evtchn_destroy(d);
          gnttab_release_mappings(d);
          tmem_destroy(d->tmem_client);
-Index: xen-4.6.6/xen/common/event_channel.c
-===================================================================
---- xen-4.6.6.orig/xen/common/event_channel.c
-+++ xen-4.6.6/xen/common/event_channel.c
+--- a/xen/common/event_channel.c
++++ b/xen/common/event_channel.c
 @@ -727,7 +727,7 @@ void send_guest_vcpu_virq(struct vcpu *v
      spin_unlock_irqrestore(&v->virq_lock, flags);
  }
@@ -168,11 +156,9 @@ Index: xen-4.6.6/xen/common/event_channel.c
  {
      unsigned long flags;
      int port;
-Index: xen-4.6.6/xen/common/v4v.c
-===================================================================
 --- /dev/null
-+++ xen-4.6.6/xen/common/v4v.c
-@@ -0,0 +1,1970 @@
++++ b/xen/common/v4v.c
+@@ -0,0 +1,1979 @@
 +/******************************************************************************
 + * v4v.c
 + *
@@ -471,6 +457,8 @@ Index: xen-4.6.6/xen/common/v4v.c
 +                                     uint32_t len)
 +{
 +  int page = offset >> PAGE_SHIFT;
++  smap_check_policy_t smap_policy;
++  struct vcpu *v = current;
 +  uint8_t *dst;
 +
 +  offset &= PAGE_SIZE - 1;
@@ -487,9 +475,12 @@ Index: xen-4.6.6/xen/common/v4v.c
 +              MY_FILE, __LINE__, dst, offset, (void *) src_hnd.p,
 +              (int) (PAGE_SIZE - offset));
 +#endif
-+      if (copy_from_guest ((dst + offset), src_hnd, PAGE_SIZE - offset))
++      smap_policy = smap_policy_change(v, SMAP_CHECK_DISABLED);
++      if (copy_from_guest ((dst + offset), src_hnd, PAGE_SIZE - offset)) {
++          smap_policy_change(v, smap_policy);
 +          return -EFAULT;
-+
++      }
++      smap_policy_change(v, smap_policy);
 +
 +      page++;
 +      len -= PAGE_SIZE - offset;
@@ -506,8 +497,12 @@ Index: xen-4.6.6/xen/common/v4v.c
 +  printk (KERN_ERR "%s:%d copy_from_guest(%p+%d,%p,%d)\n",
 +          MY_FILE, __LINE__, dst, offset, (void *) src_hnd.p, len);
 +#endif
-+  if (copy_from_guest ((dst + offset), src_hnd, len))
++  smap_policy = smap_policy_change(v, SMAP_CHECK_DISABLED);
++  if (copy_from_guest ((dst + offset), src_hnd, len)) {
++      smap_policy_change(v, smap_policy);
 +      return -EFAULT;
++  }
++  smap_policy_change(v, smap_policy);
 +
 +  return 0;
 +}
@@ -2143,10 +2138,8 @@ Index: xen-4.6.6/xen/common/v4v.c
 + * indent-tabs-mode: nil
 + * End:
 + */
-Index: xen-4.6.6/xen/include/Makefile
-===================================================================
---- xen-4.6.6.orig/xen/include/Makefile
-+++ xen-4.6.6/xen/include/Makefile
+--- a/xen/include/Makefile
++++ b/xen/include/Makefile
 @@ -92,7 +92,7 @@ all: headers.chk headers++.chk
  
  PUBLIC_HEADERS := $(filter-out public/arch-% public/dom0_ops.h, $(wildcard public/*.h public/*/*.h) $(public-y))
@@ -2156,10 +2149,8 @@ Index: xen-4.6.6/xen/include/Makefile
  
  headers.chk: $(PUBLIC_ANSI_HEADERS) Makefile
  	for i in $(filter %.h,$^); do \
-Index: xen-4.6.6/xen/include/asm-x86/guest_access.h
-===================================================================
---- xen-4.6.6.orig/xen/include/asm-x86/guest_access.h
-+++ xen-4.6.6/xen/include/asm-x86/guest_access.h
+--- a/xen/include/asm-x86/guest_access.h
++++ b/xen/include/asm-x86/guest_access.h
 @@ -48,7 +48,7 @@
  /* Cast a guest handle (either XEN_GUEST_HANDLE or XEN_GUEST_HANDLE_PARAM)
   * to the specified type of XEN_GUEST_HANDLE_PARAM. */
@@ -2169,10 +2160,8 @@ Index: xen-4.6.6/xen/include/asm-x86/guest_access.h
      (XEN_GUEST_HANDLE_PARAM(type)) { _x };            \
  })
  
-Index: xen-4.6.6/xen/include/public/v4v.h
-===================================================================
 --- /dev/null
-+++ xen-4.6.6/xen/include/public/v4v.h
++++ b/xen/include/public/v4v.h
 @@ -0,0 +1,529 @@
 +#ifndef __V4V_H__
 +#define __V4V_H__
@@ -2703,10 +2692,8 @@ Index: xen-4.6.6/xen/include/public/v4v.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-Index: xen-4.6.6/xen/include/public/xen.h
-===================================================================
---- xen-4.6.6.orig/xen/include/public/xen.h
-+++ xen-4.6.6/xen/include/public/xen.h
+--- a/xen/include/public/xen.h
++++ b/xen/include/public/xen.h
 @@ -100,7 +100,7 @@ DEFINE_XEN_GUEST_HANDLE(xen_ulong_t);
  #define __HYPERVISOR_domctl               36
  #define __HYPERVISOR_kexec_op             37
@@ -2725,10 +2712,8 @@ Index: xen-4.6.6/xen/include/public/xen.h
  #define VIRQ_ENOMEM     12 /* G. (DOM0) Low on heap memory       */
  #define VIRQ_XENPMU     13 /* V.  PMC interrupt                              */
  
-Index: xen-4.6.6/xen/include/xen/sched.h
-===================================================================
---- xen-4.6.6.orig/xen/include/xen/sched.h
-+++ xen-4.6.6/xen/include/xen/sched.h
+--- a/xen/include/xen/sched.h
++++ b/xen/include/xen/sched.h
 @@ -14,6 +14,7 @@
  #include <xen/nodemask.h>
  #include <xen/radix-tree.h>
@@ -2748,10 +2733,8 @@ Index: xen-4.6.6/xen/include/xen/sched.h
  };
  
  struct domain_setup_info
-Index: xen-4.6.6/xen/include/xen/v4v.h
-===================================================================
 --- /dev/null
-+++ xen-4.6.6/xen/include/xen/v4v.h
++++ b/xen/include/xen/v4v.h
 @@ -0,0 +1,82 @@
 +
 +#ifndef __V4V_PRIVATE_H__
@@ -2835,10 +2818,8 @@ Index: xen-4.6.6/xen/include/xen/v4v.h
 + * indent-tabs-mode: nil
 + * End:
 + */
-Index: xen-4.6.6/xen/include/xsm/dummy.h
-===================================================================
---- xen-4.6.6.orig/xen/include/xsm/dummy.h
-+++ xen-4.6.6/xen/include/xsm/dummy.h
+--- a/xen/include/xsm/dummy.h
++++ b/xen/include/xsm/dummy.h
 @@ -721,4 +721,9 @@ static XSM_INLINE int xsm_pmu_op (XSM_DE
      }
  }
@@ -2849,10 +2830,8 @@ Index: xen-4.6.6/xen/include/xsm/dummy.h
 +}
 +
  #endif /* CONFIG_X86 */
-Index: xen-4.6.6/xen/include/xsm/xsm.h
-===================================================================
---- xen-4.6.6.orig/xen/include/xsm/xsm.h
-+++ xen-4.6.6/xen/include/xsm/xsm.h
+--- a/xen/include/xsm/xsm.h
++++ b/xen/include/xsm/xsm.h
 @@ -192,6 +192,7 @@ struct xsm_operations {
      int (*ioport_mapping) (struct domain *d, uint32_t s, uint32_t e, uint8_t allow);
      int (*pmu_op) (struct domain *d, unsigned int op);
@@ -2873,20 +2852,16 @@ Index: xen-4.6.6/xen/include/xsm/xsm.h
  #endif /* CONFIG_X86 */
  
  #endif /* XSM_NO_WRAPPERS */
-Index: xen-4.6.6/xen/xsm/dummy.c
-===================================================================
---- xen-4.6.6.orig/xen/xsm/dummy.c
-+++ xen-4.6.6/xen/xsm/dummy.c
+--- a/xen/xsm/dummy.c
++++ b/xen/xsm/dummy.c
 @@ -163,4 +163,5 @@ void xsm_fixup_ops (struct xsm_operation
      set_to_dummy_if_null(ops, pmu_op);
  #endif
      set_to_dummy_if_null(ops, memory_translate);
 +    set_to_dummy_if_null(ops, v4v_send);
  }
-Index: xen-4.6.6/xen/xsm/flask/hooks.c
-===================================================================
---- xen-4.6.6.orig/xen/xsm/flask/hooks.c
-+++ xen-4.6.6/xen/xsm/flask/hooks.c
+--- a/xen/xsm/flask/hooks.c
++++ b/xen/xsm/flask/hooks.c
 @@ -1621,6 +1621,11 @@ static int flask_pmu_op (struct domain *
  }
  #endif /* CONFIG_X86 */
@@ -2907,10 +2882,8 @@ Index: xen-4.6.6/xen/xsm/flask/hooks.c
  };
  
  static __init void flask_init(void)
-Index: xen-4.6.6/xen/xsm/flask/policy/access_vectors
-===================================================================
---- xen-4.6.6.orig/xen/xsm/flask/policy/access_vectors
-+++ xen-4.6.6/xen/xsm/flask/policy/access_vectors
+--- a/xen/xsm/flask/policy/access_vectors
++++ b/xen/xsm/flask/policy/access_vectors
 @@ -495,3 +495,8 @@ class security
  # remove ocontext label definitions for resources
      del_ocontext
@@ -2920,10 +2893,8 @@ Index: xen-4.6.6/xen/xsm/flask/policy/access_vectors
 +{
 +    send
 +}
-Index: xen-4.6.6/xen/xsm/flask/policy/security_classes
-===================================================================
---- xen-4.6.6.orig/xen/xsm/flask/policy/security_classes
-+++ xen-4.6.6/xen/xsm/flask/policy/security_classes
+--- a/xen/xsm/flask/policy/security_classes
++++ b/xen/xsm/flask/policy/security_classes
 @@ -18,5 +18,6 @@ class shadow
  class event
  class grant
