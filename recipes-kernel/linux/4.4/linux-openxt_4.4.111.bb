@@ -53,3 +53,5 @@ SRC_URI[kernel.sha256sum] = "a201282e8eaf62b4f51edb2241e98ff805fe2d1b04a72a2328c
 LIC_FILES_CHKSUM = "file://COPYING;md5=d7810fab7487fb0aad327b76f1be7cd7"
 
 PR = "r2"
+
+ERROR_QA_remove += "arch"
