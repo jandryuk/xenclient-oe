@@ -18,6 +18,8 @@ DEPENDS_append_xenclient-nilfvm += " ${@deb_bootstrap_deps(d)} "
 
 inherit ${@"xenclient-simple-deb"if(d.getVar("MACHINE",1)=="xenclient-nilfvm")else("null")}
 
+ERROR_QA_remove += "arch"
+
 PV = "git${SRCPV}"
 
 SRCREV = "${AUTOREV}"
