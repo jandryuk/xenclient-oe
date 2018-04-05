@@ -24,7 +24,7 @@ inherit autotools xenclient update-rc.d pkgconfig xc-rpcgen-c
 
 
 INITSCRIPT_NAME = "xenclient-input"
-INITSCRIPT_PARAMS = "defaults 75"
+INITSCRIPT_PARAMS = "start 75 5 . stop 75 0 1 2 3 4 6 ."
 
 do_install_append() {
 	install -d ${D}${sysconfdir}/init.d
