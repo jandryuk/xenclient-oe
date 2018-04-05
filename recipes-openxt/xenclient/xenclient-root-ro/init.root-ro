@@ -477,4 +477,12 @@ fi
 
 unload_modules
 
-exec /sbin/init
+for arg in $( cat /proc/cmdline ); do
+	case "${arg}" in
+		[0123456sS])
+			RUNLEVEL="${arg}"
+			;;
+	esac
+done
+
+exec /sbin/init ${RUNLEVEL}
