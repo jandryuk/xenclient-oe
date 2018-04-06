@@ -39,6 +39,8 @@ case "$1" in
   stop)
         echo "Stopping surface manager"
         start-stop-daemon --stop --quiet --oknodo --pidfile /var/run/surfman.pid
+        echo "Restarting input"
+        /etc/init.d/xenclient-input restart
         ;;
 
   restart)
