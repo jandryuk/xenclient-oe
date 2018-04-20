@@ -1,6 +1,5 @@
 DEPENDS_${PN} += " \
     libselinux \
-    libv4v \
     xen \
 "
 FILESEXTRAPATHS_prepend := "${THISDIR}/patches:"
@@ -8,7 +7,6 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/patches:"
 SRC_URI += " \
     file://0001-Make-the-default-DBus-reply-timeout-configurable.patch \
     file://add-domid-authentication.patch \
-    file://v4v.patch \
 "
 
 do_install_append() {
