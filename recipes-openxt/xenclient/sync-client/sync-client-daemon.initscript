@@ -23,7 +23,8 @@ PID_FILE="/var/run/$DAEMON_NAME.pid"
 
 start()
 {
-    DBUS_SYSTEM_BUS_ADDRESS=tcp:family=v4v,host=1.0.0.0,port=5556 \
+    DBUS_SYSTEM_BUS_ADDRESS=tcp:host=1.0.0.0,port=5556 \
+        INET_IS_V4V=1 \
         LD_PRELOAD=/usr/lib/libv4v-1.0.so.0 \
         start-stop-daemon --start \
                           --quiet \
