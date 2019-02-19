@@ -8,5 +8,6 @@ do_install() {
         install -m 0755 ${WORKDIR}/init.sh ${D}/init
 }
 
+COMPATIBLE_HOST = "xenclient-stubdomain"
 PACKAGE_ARCH = "${MACHINE_ARCH}"
 FILES_${PN} += " /init "
