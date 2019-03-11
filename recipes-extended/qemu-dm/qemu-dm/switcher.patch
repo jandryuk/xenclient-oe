@@ -461,7 +461,7 @@ PATCHES
 +static void xen_input_wakeup(void)
 +{
 +    if (runstate_check(RUN_STATE_SUSPENDED)) {
-+        qemu_system_wakeup_request(QEMU_WAKEUP_REASON_OTHER);
++        qemu_system_wakeup_request(QEMU_WAKEUP_REASON_OTHER, NULL);
 +    } else {
 +        DEBUG_MSG("wakeup requested but state != suspended\n");
 +    }
@@ -547,7 +547,7 @@ PATCHES
 +}
 --- a/vl.c
 +++ b/vl.c
-@@ -115,6 +115,7 @@ int main(int argc, char **argv)
+@@ -113,6 +113,7 @@ int main(int argc, char **argv)
  #include "sysemu/arch_init.h"
  
  #include "ui/qemu-spice.h"
