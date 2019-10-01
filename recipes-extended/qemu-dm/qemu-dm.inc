@@ -1,6 +1,6 @@
 LICENSE = "GPLv2 & LGPLv2"
 LIC_FILES_CHKSUM = "file://COPYING;md5=441c28d2cf86e15a37fa47e15a72fbac  \
-                    file://COPYING.LIB;md5=79ffa0ec772fa86740948cb7327a0cc7"
+                    file://COPYING.LIB;md5=4fbd65380cdd255951079008b364516c"
 DEPENDS = " \
     xen \
     alsa-lib \
@@ -14,7 +14,7 @@ DEPENDS = " \
     pixman \
 "
 
-PV = "3.1.0"
+PV = "4.1.0"
 
 # Leave this in it's own definition so that it can be replaced with a local
 # tarball (the QEMU download speed is terrible). If this is combined with the
@@ -53,8 +53,8 @@ SRC_URI += "file://compile-time-stubdom-flag.patch \
             file://round-pci-region-sizes.patch \
             "
 
-SRC_URI[md5sum] = "8a75cfd18460143d1b352234e437ca8d"
-SRC_URI[sha256sum] = "98fee0c86b299ebaf08587ba8df1dc8bb7152708d62937a0631875d95cc8d921"
+SRC_URI[md5sum] = "5862fc984bb955c4c24427d3bceddca5"
+SRC_URI[sha256sum] = "49f0de77410d4d0f7d0321ff2c2888b281381f06e1e2dac9ec4d061e3934f4ae"
 
 S = "${WORKDIR}/qemu-${PV}"
 
