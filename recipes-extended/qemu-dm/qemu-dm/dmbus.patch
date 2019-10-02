@@ -34,7 +34,7 @@ PATCHES
 ################################################################################
 --- a/configure
 +++ b/configure
-@@ -2199,6 +2199,34 @@ EOF
+@@ -2318,6 +2318,34 @@ EOF
  fi
  
  ##########################################
@@ -73,7 +73,7 @@ PATCHES
 +++ b/hw/xen/Makefile.objs
 @@ -1,5 +1,6 @@
  # xen backend driver support
- common-obj-$(CONFIG_XEN) += xen_backend.o xen_devconfig.o xen_pvdev.o xen-common.o
+ common-obj-$(CONFIG_XEN) += xen-legacy-backend.o xen_devconfig.o xen_pvdev.o xen-common.o xen-bus.o xen-bus-helper.o xen-backend.o
 +common-obj-$(CONFIG_XEN) += xen-dmbus.o
  
  obj-$(CONFIG_XEN_PCI_PASSTHROUGH) += xen-host-pci-device.o
