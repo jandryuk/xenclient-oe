@@ -63,7 +63,7 @@ PATCHES
 ################################################################################
 --- a/hw/i386/xen/xen-hvm.c
 +++ b/hw/i386/xen/xen-hvm.c
-@@ -1495,7 +1502,11 @@ void xen_hvm_init(PCMachineState *pcms,
+@@ -1502,7 +1502,11 @@ void xen_hvm_init(PCMachineState *pcms,
          error_report("xen backend core setup failed");
          goto err;
      }

@@ -41,7 +41,7 @@ PATCHES
 ################################################################################
 --- a/hw/display/vga-isa.c
 +++ b/hw/display/vga-isa.c
-@@ -40,6 +40,7 @@ typedef struct ISAVGAState {
+@@ -42,6 +42,7 @@ typedef struct ISAVGAState {
      struct VGACommonState state;
      PortioList portio_vga;
      PortioList portio_vbe;
@@ -49,7 +49,7 @@ PATCHES
  } ISAVGAState;
  
  static void vga_isa_reset(DeviceState *dev)
-@@ -56,18 +57,20 @@ static void vga_isa_realizefn(DeviceStat
+@@ -58,18 +59,20 @@ static void vga_isa_realizefn(DeviceStat
      ISAVGAState *d = ISA_VGA(dev);
      VGACommonState *s = &d->state;
      MemoryRegion *vga_io_memory;
