@@ -75,7 +75,7 @@ PATCHES
 --------------------------------------------------------------------------------
 --- a/configure
 +++ b/configure
-@@ -451,6 +451,7 @@ debug_stack_usage="no"
+@@ -462,6 +462,7 @@ debug_stack_usage="no"
  crypto_afalg="no"
  seccomp=""
  glusterfs=""
@@ -83,7 +83,7 @@ PATCHES
  stubdom="no"
  atapipt="no"
  atapiptargo="no"
-@@ -1380,6 +1381,10 @@ for opt do
+@@ -1423,6 +1424,10 @@ for opt do
    ;;
    --disable-openxt-stubdom) stubdom="no"
    ;;
@@ -94,15 +94,15 @@ PATCHES
    --disable-gtk) gtk="no"
    ;;
    --enable-gtk) gtk="yes"
-@@ -6140,6 +6145,7 @@ echo "gcov enabled      $gcov"
+@@ -6504,6 +6509,7 @@ echo "gcov enabled      $gcov"
  echo "OpenXT stubdomain support $stubdom"
  echo "ATAPI PT support  $atapipt"
  echo "ATAPI PT Argo support  $atapiptargo"
 +echo "Surfman support   $surfman"
  echo "TPM support       $tpm"
- echo "libssh2 support   $libssh2"
- echo "TPM passthrough   $tpm_passthrough"
-@@ -6822,6 +6828,10 @@ if test "$atapiptargo" = "yes" ; then
+ echo "libssh support    $libssh"
+ echo "QOM debugging     $qom_cast_debug"
+@@ -7232,6 +7238,10 @@ if test "$atapiptargo" = "yes" ; then
    echo "CONFIG_ATAPI_PT_ARGO=y" >> $config_host_mak
  fi
  
@@ -111,8 +111,8 @@ PATCHES
 +fi
 +
  if test "$tpm" = "yes"; then
-   echo 'CONFIG_TPM=$(CONFIG_SOFTMMU)' >> $config_host_mak
-   # TPM passthrough support?
+   echo 'CONFIG_TPM=y' >> $config_host_mak
+ fi
 --- a/hw/i386/xen/xen-hvm.c
 +++ b/hw/i386/xen/xen-hvm.c
 @@ -40,7 +40,21 @@
@@ -137,7 +137,7 @@ PATCHES
  static bool xen_in_migration;
  
  /* Compatibility with older version */
-@@ -416,10 +430,17 @@ go_physmap:
+@@ -418,10 +432,17 @@ go_physmap:
          return -1;
      }
  
@@ -156,7 +156,7 @@ PATCHES
      if (rc) {
          error_report("pin_memory_cacheattr failed: %s", strerror(errno));
      }
-@@ -1555,9 +1576,85 @@ void destroy_hvm_domain(bool reboot)
+@@ -1566,9 +1587,85 @@ void destroy_hvm_domain(bool reboot)
      }
  }
  
@@ -244,7 +244,7 @@ PATCHES
  void xen_shutdown_fatal_error(const char *fmt, ...)
 --- a/include/hw/xen/xen.h
 +++ b/include/hw/xen/xen.h
-@@ -47,6 +47,8 @@ void xen_ram_alloc(ram_addr_t ram_addr,
+@@ -45,6 +45,8 @@ void xen_ram_alloc(ram_addr_t ram_addr,
  void xen_hvm_modified_memory(ram_addr_t start, ram_addr_t length);
  
  void xen_register_framebuffer(struct MemoryRegion *mr);
@@ -255,7 +255,7 @@ PATCHES
  enum xenstore_pm_type {
 --- a/include/sysemu/sysemu.h
 +++ b/include/sysemu/sysemu.h
-@@ -110,6 +110,7 @@ typedef enum {
+@@ -94,6 +94,7 @@ typedef enum {
  
  extern int vga_interface_type;
  #define xenfb_enabled (vga_interface_type == VGA_XENFB)
@@ -409,15 +409,15 @@ PATCHES
 +#endif /* !_SURFMAN_H_ */
 --- a/qapi/ui.json
 +++ b/qapi/ui.json
-@@ -1079,7 +1079,7 @@
+@@ -1132,7 +1132,7 @@
  ##
  { 'enum'    : 'DisplayType',
    'data'    : [ 'default', 'none', 'gtk', 'sdl',
--                'egl-headless', 'curses', 'cocoa' ] }
-+                'egl-headless', 'curses', 'cocoa', 'surfman' ] }
+-                'egl-headless', 'curses', 'cocoa',
++                'egl-headless', 'curses', 'cocoa', 'surfman',
+                 'spice-app'] }
  
  ##
- # @DisplayOptions:
 --- a/ui/Makefile.objs
 +++ b/ui/Makefile.objs
 @@ -15,6 +15,7 @@ common-obj-$(CONFIG_COCOA) += cocoa.o
@@ -430,7 +430,7 @@ PATCHES
  common-obj-$(CONFIG_SDL) += sdl.mo
 --- a/ui/qemu-pixman.c
 +++ b/ui/qemu-pixman.c
-@@ -71,7 +71,17 @@ pixman_format_code_t qemu_default_pixman
+@@ -70,7 +70,17 @@ pixman_format_code_t qemu_default_pixman
          case 15:
              return PIXMAN_x1r5g5b5;
          case 16:
