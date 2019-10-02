@@ -150,9 +150,9 @@ PATCHES
      uint32_t vbe_start_addr;
      uint32_t vbe_line_offset;
      uint32_t vbe_bank_mask;
---- a/hw/xen/xen_backend.c
-+++ b/hw/xen/xen_backend.c
-@@ -974,3 +974,35 @@ int xenstore_update_power(enum xenstore_
+--- a/hw/xen/xen-legacy-backend.c
++++ b/hw/xen/xen-legacy-backend.c
+@@ -967,3 +967,35 @@ int xenstore_update_power(enum xenstore_
  
      return xenstore_write_int(dompath, "power-state", type);
  }
@@ -190,7 +190,7 @@ PATCHES
 +}
 --- a/include/hw/xen/xen.h
 +++ b/include/hw/xen/xen.h
-@@ -57,5 +57,7 @@ enum xenstore_pm_type {
+@@ -55,5 +55,7 @@ enum xenstore_pm_type {
  };
  
  int xenstore_update_power(enum xenstore_pm_type const type);
@@ -200,7 +200,7 @@ PATCHES
  #endif /* QEMU_HW_XEN_H */
 --- a/include/ui/console.h
 +++ b/include/ui/console.h
-@@ -210,6 +210,9 @@ typedef struct DisplayChangeListenerOps
+@@ -203,6 +203,9 @@ typedef struct DisplayChangeListenerOps
  
      void (*dpy_mouse_set)(DisplayChangeListener *dcl,
                            int x, int y, int on);
@@ -210,7 +210,7 @@ PATCHES
      void (*dpy_cursor_define)(DisplayChangeListener *dcl,
                                QEMUCursor *cursor);
  
-@@ -299,6 +302,9 @@ void dpy_text_cursor(QemuConsole *con, i
+@@ -288,6 +291,9 @@ void dpy_text_cursor(QemuConsole *con, i
  void dpy_text_update(QemuConsole *con, int x, int y, int w, int h);
  void dpy_text_resize(QemuConsole *con, int w, int h);
  void dpy_mouse_set(QemuConsole *con, int x, int y, int on);
@@ -222,7 +222,7 @@ PATCHES
  bool dpy_gfx_check_format(QemuConsole *con,
 --- a/ui/console.c
 +++ b/ui/console.c
-@@ -1732,6 +1732,29 @@ void dpy_mouse_set(QemuConsole *con, int
+@@ -1703,6 +1703,29 @@ void dpy_mouse_set(QemuConsole *con, int
      }
  }
  
