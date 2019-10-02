@@ -90,10 +90,13 @@ EXTRA_OECONF += " \
     --disable-slirp \
     --disable-curl \
     --disable-kvm \
+    --disable-spice \
+    --disable-opengl \
+    --disable-rdma \
+    --disable-pvrdma \
+    --disable-iconv \
     --disable-tools \
     --disable-fdt \
-    --disable-uuid \
-    --disable-vhdx \
     --disable-qom-cast-debug \
     --disable-tcg-interpreter \
     --disable-tcg \
@@ -178,11 +181,13 @@ do_compile_prepend() {
 	dev_disable CONFIG_VIRTIO_CRYPTO
 	dev_disable CONFIG_VIRTIO_GPU
 	dev_disable CONFIG_VIRTIO_INPUT
+	dev_disable CONFIG_VIRTIO_INPUT_HOST
 	dev_disable CONFIG_VIRTIO_NET
 	dev_disable CONFIG_VIRTIO_RNG
 	dev_disable CONFIG_VIRTIO_SCSI
 	dev_disable CONFIG_VIRTIO_SERIAL
 	dev_disable CONFIG_USB_OHCI
+	dev_disable CONFIG_USB_OHCI_PCI
 	# Things blow up without xhci
 	#dev_disable CONFIG_USB_XHCI
 	dev_disable CONFIG_NE2000_PCI
@@ -203,6 +208,7 @@ do_compile_prepend() {
 	dev_disable CONFIG_NVME_PCI
 	dev_disable CONFIG_SD
 	dev_disable CONFIG_SDHCI
+	dev_disable CONFIG_SDHCI_PCI
 	dev_disable CONFIG_EDU
 	dev_disable CONFIG_IVSHMEM
 	dev_disable CONFIG_ROCKER
