@@ -51,6 +51,7 @@ SRC_URI += "file://compile-time-stubdom-flag.patch \
             file://block-remove-unused-block-format-support.patch \
             file://net-Remove-unused-network-options.patch \
             file://round-pci-region-sizes.patch \
+            file://0001-crypto-Make-getrandom-non-blocking.patch \
             "
 
 SRC_URI[md5sum] = "5862fc984bb955c4c24427d3bceddca5"
