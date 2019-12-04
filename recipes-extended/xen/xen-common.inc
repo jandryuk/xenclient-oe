@@ -50,7 +50,6 @@ SRC_URI_append = " \
     file://disable-cpuid-hle-rtm.patch \
     file://allow-stubdoms-cacheattr-control.patch \
     file://add-xc-hypercall-page.patch \
-    file://libxl-do-not-destroy-in-use-tapdevs.patch \
     file://libxl-syslog.patch \
     file://libxl-RFC-4of7-Add-stubdomain-version-tools-domain-build-info.patch \
     file://libxl-RFC-5of7-Handle-Linux-stubdomain-specific-QEMUoptions.patch \
@@ -78,7 +77,6 @@ SRC_URI_append = " \
     file://libxl-pci-passthrough-fixes.patch \
     file://libxl-vwif-support.patch \
     file://libxl-atapi-pt.patch \
-    file://libxl-iso-hotswap.patch \
     file://libxl-avoid-creating-unusable-cdrom-vbd-xs-nodes.patch \
     file://libxl-disable-json-updates.patch \
     file://libxl-allow-non-qdisk-cdrom.patch \
@@ -89,7 +87,6 @@ SRC_URI_append = " \
     file://libxl-block-scripts-log-to-syslog.patch \
     file://domain-reboot.patch \
     file://libxl-retry-qmp-pci-add.patch \
-    ${BLKTAP_PATCHQUEUE} \
     file://efi-hardcode-openxt-cfg.patch \
     file://shim-support-for-shim-lock-measure.patch \
     file://efi-require-shim.patch \

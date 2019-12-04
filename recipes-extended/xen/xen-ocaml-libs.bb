@@ -59,8 +59,6 @@ EXTRA_OEMAKE += "DESTDIR=${D}"
 # is required for other binaries installation, so override OCAMLDESTDIR.
 EXTRA_OEMAKE += "OCAMLDESTDIR=${D}${sitelibdir}"
 
-EXTRA_OECONF += " --enable-blktap2 "
-
 TARGET_CC_ARCH += "${LDFLAGS}"
 CC_FOR_OCAML="${TARGET_PREFIX}gcc"
 
