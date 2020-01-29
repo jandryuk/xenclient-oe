@@ -99,6 +99,7 @@ RDEPENDS_${PN} = " \
     drm-surfman-plugin \
     eject \
     linux-input \
+    argo-input-receiver \
     iputils-ping \
     vusb-daemon \
     xenmgr-data \
