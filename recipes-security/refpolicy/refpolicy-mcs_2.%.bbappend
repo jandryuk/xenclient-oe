@@ -166,6 +166,7 @@ SRC_URI += " \
     file://patches/xl-sysadm-interfaces.patch \
     file://patches/policy.modules.admin.bootloader.diff \
     file://patches/xenstore-labeling.patch \
+    file://patches/xen-privcmd.patch \
 "
 
 DEPENDS_append += " \
