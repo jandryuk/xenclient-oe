@@ -10,7 +10,7 @@ SRC_URI = "git://${OPENXT_GIT_MIRROR}/installer.git;protocol=${OPENXT_GIT_PROTOC
 
 S = "${WORKDIR}/git"
 
-inherit allarch
+inherit allarch deploy
 
 PACKAGES += "${PN}-part2"
 
@@ -24,7 +24,7 @@ RDEPENDS_${PN} = " \
     xenclient-repo-certs \
     xenclient-caps \
 "
-RDEPENDS_${PN}-part2 += "busybox"
+INSANE_SKIP_${PN}-part2 += "file-rdeps"
 
 do_install () {
     ${S}/install part1 ${D}/install
@@ -32,3 +32,10 @@ do_install () {
     # base-files provides a run directory and we should not conflict
     mv -f ${D}/run ${D}/run.installer
 }
+
+do_deploy() {
+    tar --exclude=./install --transform=s/run.installer/run/ \
+        -C ${D} -cjf ${DEPLOYDIR}/control.tar.bz2 .
+}
+
+addtask deploy after do_install before do_build
