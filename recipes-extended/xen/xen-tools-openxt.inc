@@ -16,6 +16,7 @@ RDEPENDS_${PN}-scripts-block += " udev"
 PACKAGES += " \
     ${PN}-cmp-fd-file-inode \
     ${PN}-toolstack-headers \
+    xen-xsm-policy \
     "
 
 PROVIDES =+ "virtual/xenstored"
@@ -43,6 +44,10 @@ FILES_${PN}-xenstored = " \
     ${INIT_D_DIR}/xenstored.${PN}-xenstored \
     ${sysconfdir}/xen/xenstored.conf \
     "
+
+FILES_xen-xsm-policy += " \
+    ${sysconfdir}/xen/xenrefpolicy \
+"
 
 # This init script is added by OpenXT and runs the xen-init-dom0 script
 # that meta-virtualization has packaged in the ${PN}-xl package.
@@ -110,6 +115,9 @@ do_install_append() {
     install -d ${D}${sysconfdir}/udev/rules.d
     install -m 0755 ${WORKDIR}/xen-vbd3-backend.rules ${D}${sysconfdir}/udev/rules.d/xen-vbd3-backend.rules
     install -m 0755 ${WORKDIR}/block-vbd3 ${D}${sysconfdir}/xen/scripts/block-vbd3
+
+    install -d ${D}${sysconfdir}/xen/xenrefpolicy/policy
+    install -m 0644 ${D}/boot/xenpolicy-* ${D}${sysconfdir}/xen/xenrefpolicy/policy/policy.24
 
     rm -rf ${D}/${INIT_D_DIR}/xencommons
     rm -rf ${D}/${INIT_D_DIR}/xendriverdomain

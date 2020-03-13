@@ -1,0 +1,40 @@
+From 46e4fe316502bb478eb0796f12523b287dda52fb Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 10:58:22 -0400
+Subject: [PATCH 09/26] oxt: flask: Add blktap_disk interface
+
+blktap uses grant copy, so we need to allow that extra operation in
+addition to the normal pv_disk operations.
+
+While only the blktap backend has code for grant copy operations,
+somehow we still see grant copy operations issued by the frontend to the
+backend.  Therefore we allow grant copy in both directions.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/xen.if | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/tools/flask/policy/modules/xen.if b/tools/flask/policy/modules/xen.if
+index 962c3a7cb1..165df3f64e 100644
+--- a/tools/flask/policy/modules/xen.if
++++ b/tools/flask/policy/modules/xen.if
+@@ -145,6 +145,15 @@ define(`pv_disk', `
+ 	allow $2 $1:grant { map_read map_write unmap };
+ ')
+ 
++# blktap_disk(dom_fe, dom_be)
++#   Allow dom_fe to use a blktap in dom_be
++define(`blktap_disk', `
++	pv_disk($1, $2)
++	# Need to allow copy for blktap3 at least...
++	allow $1 $2:grant { copy };
++	allow $2 $1:grant { copy };
++')
++
+ # domain_self_comms(domain)
+ #   Allow a non-singleton domain type to communicate with itself using grants
+ #   and event channels
+-- 
+2.21.0
+

@@ -1,0 +1,33 @@
+From 9e73793f23d6314ec8656aa2de26e1a6ee13c90b Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 09:35:43 -0400
+Subject: [PATCH 04/26] oxt: flask: Disable unused domain types
+
+We don't use the isolated_domU, nomigrate or prot_domU types, so disable
+their modules.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/modules.conf | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tools/flask/policy/modules/modules.conf b/tools/flask/policy/modules/modules.conf
+index b8bcabca70..d90f492992 100644
+--- a/tools/flask/policy/modules/modules.conf
++++ b/tools/flask/policy/modules/modules.conf
+@@ -30,9 +30,9 @@ openxt_guest_features = on
+ domU = on
+ 
+ # Example types with restrictions
+-isolated_domU = on
+-prot_domU = on
+-nomigrate = on
++isolated_domU = off
++prot_domU = off
++nomigrate = off
+ 
+ # Example device policy.  Also see policy/device_contexts.
+ nic_dev = on
+-- 
+2.21.0
+

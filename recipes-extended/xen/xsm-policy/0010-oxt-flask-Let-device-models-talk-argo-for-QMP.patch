@@ -1,0 +1,30 @@
+From c8928a76fd1bc5d5b19e494e82460a253491a26b Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 10:22:27 -0400
+Subject: [PATCH 10/26] oxt: flask: Let device models talk argo for QMP
+
+We use argo for dom0 to talk QMP to qemu in our stubdoms, so enable that
+communications path.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/xen.if | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/tools/flask/policy/modules/xen.if b/tools/flask/policy/modules/xen.if
+index 165df3f64e..fe20ad4b14 100644
+--- a/tools/flask/policy/modules/xen.if
++++ b/tools/flask/policy/modules/xen.if
+@@ -186,6 +186,9 @@ define(`make_device_model', `
+ 	device_model($2, $3)
+ 	allow $1 $2:domain2 make_priv_for;
+ 	allow $1 $3:domain2 set_as_target;
++
++	# priv and dm_dom talk argo for QMP
++	argo_comms($1, $2)
+ ')
+ ################################################################################
+ #
+-- 
+2.21.0
+

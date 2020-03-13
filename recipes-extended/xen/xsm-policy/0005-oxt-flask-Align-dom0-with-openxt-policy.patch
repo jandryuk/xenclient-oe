@@ -1,0 +1,108 @@
+From 7c21d9b9be1fbc1e076d4191a9733a88a98c42ec Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 09:31:49 -0400
+Subject: [PATCH 05/26] oxt: flask: Align dom0 with openxt policy
+
+Reduce the dom0 permissions, especially xen_t ones, to bring it in line
+with upstream OpenXT.
+
+We leave allow dom0_t security_t:security { add_ocontext del_ocontext };
+since we will be labeling PCI devices.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/dom0.te | 40 ++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
+
+diff --git a/tools/flask/policy/modules/dom0.te b/tools/flask/policy/modules/dom0.te
+index a347d664f8..ad8e91ef62 100644
+--- a/tools/flask/policy/modules/dom0.te
++++ b/tools/flask/policy/modules/dom0.te
+@@ -7,23 +7,20 @@
+ #
+ ################################################################################
+ allow dom0_t xen_t:xen {
+-	settime tbufcontrol readconsole clearconsole perfcontrol mtrr_add
+-	mtrr_del mtrr_read microcode physinfo quirk writeconsole readapic
+-	writeapic privprofile nonprivprofile kexec firmware sleep frequency
+-	getidle debug getcpuinfo heap pm_op mca_op lockprof cpupool_op tmem_op
+-	tmem_control getscheduler setscheduler
++	readconsole writeconsole
++	kexec readapic writeapic mtrr_read mtrr_add mtrr_del
++	getscheduler setscheduler physinfo heap quirk
++	settime microcode firmware sleep getcpuinfo pm_op
++	cpupool_op mca_op
+ };
+ allow dom0_t xen_t:xen2 {
+-	resource_op psr_cmt_op psr_alloc pmu_ctrl get_symbol
+-	get_cpu_levelling_caps get_cpu_featureset livepatch_op
+-	coverage_op set_parameter
++	get_cpu_featureset
+ };
+ 
+-# Allow dom0 to use all XENVER_ subops that have checks.
+ # Note that dom0 is part of domain_type so this has duplicates.
+ allow dom0_t xen_t:version {
+ 	xen_extraversion xen_compile_info xen_capabilities
+-	xen_changeset xen_pagesize xen_guest_handle xen_commandline
++	xen_changeset xen_pagesize xen_commandline
+ 	xen_build_id
+ };
+ 
+@@ -32,14 +29,10 @@ allow dom0_t xen_t:mmu memorymap;
+ # Allow dom0 to use these domctls on itself. For domctls acting on other
+ # domains, see the definitions of create_domain and manage_domain.
+ allow dom0_t dom0_t:domain {
+-	setvcpucontext max_vcpus setaffinity getaffinity getscheduler
+-	getdomaininfo getvcpuinfo getvcpucontext setdomainmaxmem setdomainhandle
+-	setdebugging hypercall settime setaddrsize getaddrsize trigger
+-	getpodtarget setpodtarget set_misc_info set_virq_handler
++	getscheduler getdomaininfo getvcpuinfo getaffinity
+ };
+ allow dom0_t dom0_t:domain2 {
+-	set_cpuid gettsc settsc setscheduler set_vnumainfo
+-	get_vnumainfo psr_cmt_op psr_alloc get_cpu_policy
++	setscheduler
+ };
+ allow dom0_t dom0_t:resource { add remove };
+ 
+@@ -47,9 +40,9 @@ allow dom0_t dom0_t:resource { add remove };
+ # checks locally, which could be used by a domain or service (such as xenstore)
+ # that does not have its own security server to make access decisions based on
+ # Xen's security policy.
+-allow dom0_t security_t:security {
+-	compute_av compute_create compute_member compute_relabel
+-};
++#allow dom0_t security_t:security {
++#	compute_av compute_create compute_member compute_relabel
++#};
+ 
+ # Allow string/SID conversions (for "xl list -Z" and similar)
+ allow dom0_t security_t:security check_context;
+@@ -58,13 +51,15 @@ allow dom0_t security_t:security check_context;
+ allow dom0_t security_t:security { add_ocontext del_ocontext };
+ 
+ # Allow performance parameters of the security server to be tweaked
+-allow dom0_t security_t:security setsecparam;
++#allow dom0_t security_t:security setsecparam;
+ 
+ # Allow changing the security policy
+-allow dom0_t security_t:security { load_policy setenforce setbool };
++#allow dom0_t security_t:security { load_policy setenforce setbool };
++# Only allow setting booleans
++allow dom0_t security_t:security { setbool };
+ 
+ # Audit policy change events even when they are allowed
+-auditallow dom0_t security_t:security { load_policy setenforce setbool };
++auditallow dom0_t security_t:security { setbool };
+ 
+ # Allow dom0 to report platform configuration changes back to the hypervisor
+ allow dom0_t xen_t:resource setup;
+@@ -75,3 +70,4 @@ admin_device(dom0_t, ioport_t)
+ admin_device(dom0_t, iomem_t)
+ 
+ domain_comms(dom0_t, dom0_t)
++allow dom0_t xen_t:argo register_any_source;
+-- 
+2.21.0
+

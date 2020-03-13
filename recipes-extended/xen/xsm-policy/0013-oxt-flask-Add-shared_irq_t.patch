@@ -1,0 +1,53 @@
+From f06baa9e15e7c9ce3097d7cd1fa4a8f6fec06a32 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 11:20:27 -0400
+Subject: [PATCH 13/26] oxt: flask: Add shared_irq_t
+
+Add a shared_irq_t in case irqs are shared.  flask-label-pci can specify
+the shared_irq_t for shared irqs.  That way device with a shared irq can
+still be labeled differently with the exception of the irq.
+
+It is behind a boolean (default true) in case you want to disable it.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/nic_dev.te | 5 +++++
+ tools/flask/policy/modules/xen.if     | 7 +++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/tools/flask/policy/modules/nic_dev.te b/tools/flask/policy/modules/nic_dev.te
+index 5206f1eddd..691b61c327 100644
+--- a/tools/flask/policy/modules/nic_dev.te
++++ b/tools/flask/policy/modules/nic_dev.te
+@@ -10,5 +10,10 @@
+ 
+ type nic_dev_t, resource_type;
+ 
++# shared_irq_t is used to label an irq when it is shared between devices
++type shared_irq_t, resource_type;
++
++gen_bool(shared_irq, true)
++
+ admin_device(dom0_t, nic_dev_t)
+ use_device_noiommu(domU_t, nic_dev_t)
+diff --git a/tools/flask/policy/modules/xen.if b/tools/flask/policy/modules/xen.if
+index 121ab2ab48..747ac7b71a 100644
+--- a/tools/flask/policy/modules/xen.if
++++ b/tools/flask/policy/modules/xen.if
+@@ -257,6 +257,13 @@ define(`stubdom_passthrough_device',`
+     admin_device($2, $4)
+     dm_delegate_devices($1, $2, $3)
+     use_device_iommu_nointremap($2, $4)
++
++    if (shared_irq) {
++        admin_device($1, shared_irq_t)
++        admin_device($2, shared_irq_t)
++        use_device_iommu_nointremap($2, shared_irq_t)
++        use_device_iommu_nointremap($3, shared_irq_t)
++    }
+ ')
+ 
+ # argo_comms(domA, domB)
+-- 
+2.21.0
+

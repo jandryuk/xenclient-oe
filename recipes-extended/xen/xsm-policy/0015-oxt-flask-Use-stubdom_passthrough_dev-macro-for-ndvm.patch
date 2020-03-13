@@ -1,0 +1,26 @@
+From 5a07bba9f6ca39177545146e276eb0bb94f5fbd1 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 12:47:47 -0400
+Subject: [PATCH 15/26] oxt: flask: Use stubdom_passthrough_dev macro for ndvm
+
+Allow the ndvm_t and stubdom to use labeled nic_dev_t devices.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/nic_dev.te | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/tools/flask/policy/modules/nic_dev.te b/tools/flask/policy/modules/nic_dev.te
+index 691b61c327..89a6e5a363 100644
+--- a/tools/flask/policy/modules/nic_dev.te
++++ b/tools/flask/policy/modules/nic_dev.te
+@@ -15,5 +15,4 @@ type shared_irq_t, resource_type;
+ 
+ gen_bool(shared_irq, true)
+ 
+-admin_device(dom0_t, nic_dev_t)
+-use_device_noiommu(domU_t, nic_dev_t)
++stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, device_t)
+-- 
+2.21.0
+

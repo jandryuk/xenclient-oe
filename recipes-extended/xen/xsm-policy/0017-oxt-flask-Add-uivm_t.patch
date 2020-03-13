@@ -1,0 +1,46 @@
+From 3de2800d79d3466fc7bcdd522f320c83641a1e95 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 10:36:16 -0400
+Subject: [PATCH 17/26] oxt: flask: Add uivm_t
+
+This is the type for the User Interface Virtual Machine.  It talks over
+argo to the ndvm for the network manager applets.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/modules.conf |  2 ++
+ tools/flask/policy/modules/uivm.te      | 12 ++++++++++++
+ 2 files changed, 14 insertions(+)
+ create mode 100644 tools/flask/policy/modules/uivm.te
+
+diff --git a/tools/flask/policy/modules/modules.conf b/tools/flask/policy/modules/modules.conf
+index c4e8569010..415378cf85 100644
+--- a/tools/flask/policy/modules/modules.conf
++++ b/tools/flask/policy/modules/modules.conf
+@@ -54,3 +54,5 @@ vm_role = on
+ 
+ # Network Device VM
+ ndvm = on
++# UI VM
++uivm = on
+diff --git a/tools/flask/policy/modules/uivm.te b/tools/flask/policy/modules/uivm.te
+new file mode 100644
+index 0000000000..82744ad6cc
+--- /dev/null
++++ b/tools/flask/policy/modules/uivm.te
+@@ -0,0 +1,12 @@
++# uivm has its memory mapped by dom0 for the xenfb, so memory must be readable.
++declare_domain(uivm_t)
++create_domain(dom0_t, uivm_t)
++manage_domain(dom0_t, uivm_t)
++blktap_disk(uivm_t, dom0_t)
++domain_self_comms(uivm_t)
++
++# Both of these domain types can be created using the default (system) role
++role system_r types { uivm_t };
++
++argo_comms(dom0_t, uivm_t)
++argo_comms(ndvm_t, uivm_t)
+-- 
+2.21.0
+

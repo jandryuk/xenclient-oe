@@ -1,0 +1,60 @@
+From e86965d4bdf58e7e97cbf2cf4eeebd0d3f480b23 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 11:52:43 -0400
+Subject: [PATCH 14/26] oxt: flask: Add ndvm_t
+
+Add ndvm_t for our Network Device Virtual Machine.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/modules.conf |  3 +++
+ tools/flask/policy/modules/ndvm.te      | 26 +++++++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 tools/flask/policy/modules/ndvm.te
+
+diff --git a/tools/flask/policy/modules/modules.conf b/tools/flask/policy/modules/modules.conf
+index d90f492992..c4e8569010 100644
+--- a/tools/flask/policy/modules/modules.conf
++++ b/tools/flask/policy/modules/modules.conf
+@@ -51,3 +51,6 @@ all_system_role = on
+ # (vchan, device frontend/backend) between their own VMs, but cannot set up a
+ # channel to a VM under a different user.
+ vm_role = on
++
++# Network Device VM
++ndvm = on
+diff --git a/tools/flask/policy/modules/ndvm.te b/tools/flask/policy/modules/ndvm.te
+new file mode 100644
+index 0000000000..310855b6af
+--- /dev/null
++++ b/tools/flask/policy/modules/ndvm.te
+@@ -0,0 +1,26 @@
++# Domains of type nomigrate_t must be built via the nomigrate_t_building label;
++# once built, dom0 cannot read their memory.
++declare_domain(ndvm_t)
++create_domain(dom0_t, ndvm_t)
++manage_domain(dom0_t, ndvm_t)
++blktap_disk(ndvm_t, dom0_t)
++domain_self_comms(ndvm_t)
++
++# Device model for ndvm_t.  You can define distinct types for device models for
++# domains of other types, or add more make_device_model lines for this type.
++declare_domain(dm_ndvm_t)
++create_domain(dom0_t, dm_ndvm_t)
++manage_domain(dom0_t, dm_ndvm_t)
++blktap_disk(dm_ndvm_t, dom0_t)
++make_device_model(dom0_t, dm_ndvm_t, ndvm_t)
++
++# Both of these domain types can be created using the default (system) role
++role system_r types { ndvm_t dm_ndvm_t };
++
++allow ndvm_t xen_t:argo register_any_source;
++argo_comms(dom0_t, ndvm_t)
++
++# domU can network through ndvm
++domain_comms(domU_t, ndvm_t)
++# as can it's stubdom
++domain_comms(dm_dom_t, ndvm_t)
+-- 
+2.21.0
+

@@ -1,0 +1,52 @@
+From 3ad852375502f41dcf5d9e9d6d112269a8a5d252 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 09:51:29 -0400
+Subject: [PATCH 16/26] oxt: flask: Update domU_t for OpenXT
+
+Provide aliases for hvm_guest_t and pv_guest_t to remain compatible with
+existing labels in OpenXT.
+
+Allow domU to network through NDVM.
+
+One change is we drop the generic domain_comms between domU_t - we want
+them isolated.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/domU.te | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/tools/flask/policy/modules/domU.te b/tools/flask/policy/modules/domU.te
+index b77df29d56..721e238813 100644
+--- a/tools/flask/policy/modules/domU.te
++++ b/tools/flask/policy/modules/domU.te
+@@ -8,17 +8,17 @@ declare_domain(domU_t)
+ domain_self_comms(domU_t)
+ create_domain(dom0_t, domU_t)
+ manage_domain(dom0_t, domU_t)
+-domain_comms(dom0_t, domU_t)
+-domain_comms(domU_t, domU_t)
++blktap_disk(domU_t, dom0_t)
+ migrate_domain_out(dom0_t, domU_t)
+ domain_self_comms(domU_t)
+ 
++typealias domU_t alias { hvm_guest_t pv_guest_t };
+ # Device model for domU_t.  You can define distinct types for device models for
+ # domains of other types, or add more make_device_model lines for this type.
+ declare_domain(dm_dom_t)
+ create_domain(dom0_t, dm_dom_t)
+ manage_domain(dom0_t, dm_dom_t)
+-domain_comms(dom0_t, dm_dom_t)
++blktap_disk(dm_dom_t, dom0_t)
+ make_device_model(dom0_t, dm_dom_t, domU_t)
+ 
+ # This is required for PCI (or other device) passthrough
+@@ -26,3 +26,5 @@ delegate_devices(dom0_t, domU_t)
+ 
+ # Both of these domain types can be created using the default (system) role
+ role system_r types { domU_t dm_dom_t };
++
++domain_comms(domU_t, ndvm_t)
+-- 
+2.21.0
+

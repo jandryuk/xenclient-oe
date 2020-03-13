@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:${THISDIR}/xsm-policy:"
 
 # XSA patches take precedence and belong at the head of the queue.
 # This ensures that any collisions with other patches get addressed
@@ -120,6 +120,28 @@ SRC_URI_append = " \
     file://0002-Linux-locking.sh-Use-cmp-fd-file-inode-for-lock-chec.patch \
     file://ocamlfind-static.patch \
     file://ocaml-makefiles-sysroot.patch \
+    file://0001-flask-Add-mmu-stat-to-create_domain_common.patch \
+    file://0002-flask-Add-gethvmc-to-create_domain_common.patch \
+    file://0003-oxt-flask-Add-openxt_guest_features.te.patch \
+    file://0004-oxt-flask-Disable-unused-domain-types.patch \
+    file://0005-oxt-flask-Align-dom0-with-openxt-policy.patch \
+    file://0006-oxt-flask-declare_domain_common-drop-alt2pmhvm_op.patch \
+    file://0007-oxt-flask-introduce-argo_comms.patch \
+    file://0008-flask-Add-pv_disk-pv_net-interfaces.patch \
+    file://0009-oxt-flask-Add-blktap_disk-interface.patch \
+    file://0010-oxt-flask-Let-device-models-talk-argo-for-QMP.patch \
+    file://0011-oxt-flask-Add-dm_delegate_device-interface.patch \
+    file://0012-oxt-flask-Add-stubdom_pasthrough_dev-interface.patch \
+    file://0013-oxt-flask-Add-shared_irq_t.patch \
+    file://0014-oxt-flask-Add-ndvm_t.patch \
+    file://0015-oxt-flask-Use-stubdom_passthrough_dev-macro-for-ndvm.patch \
+    file://0016-oxt-flask-Update-domU_t-for-OpenXT.patch \
+    file://0017-oxt-flask-Add-uivm_t.patch \
+    file://0018-oxt-flask-add-syncvm_t.patch \
+    file://0024-oxt-flask-Trim-manage_domain.patch \
+    file://0025-oxt-flask-Trim-create_domain_common-domain-perms.patch \
+    file://0026-oxt-flask-Remove-dom0-kexec-perm.patch \
+    file://oxt-flask-usbvm.patch \
 "
 
 PACKAGECONFIG =+ "xsm"

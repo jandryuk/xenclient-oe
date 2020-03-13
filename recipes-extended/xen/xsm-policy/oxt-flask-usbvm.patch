@@ -1,0 +1,41 @@
+--- a/tools/flask/policy/modules/modules.conf
++++ b/tools/flask/policy/modules/modules.conf
+@@ -58,3 +58,5 @@ ndvm = on
+ uivm = on
+ # Synchronizer VM
+ syncvm = on
++# USB VM
++usbvm = on
+--- a/tools/flask/policy/modules/nic_dev.te
++++ b/tools/flask/policy/modules/nic_dev.te
+@@ -23,2 +23,7 @@ type media_dev_t, resource_type;
+ 
+ stubdom_passthrough_device(dom0_t, dm_dom_t, domU_t, media_dev_t)
++
++# label USB controllers as usb_dev_t
++type usb_dev_t, resource_type;
++
++stubdom_passthrough_device(dom0_t, dm_usbvm_t, usbvm_t, device_t)
+--- /dev/null
++++ b/tools/flask/policy/modules/usbvm.te
+@@ -0,0 +1,20 @@
++declare_domain(usbvm_t)
++create_domain(dom0_t, usbvm_t)
++manage_domain(dom0_t, usbvm_t)
++blktap_disk(usbvm_t, dom0_t)
++domain_self_comms(usbvm_t)
++
++declare_domain(dm_usbvm_t)
++create_domain(dom0_t, dm_usbvm_t)
++manage_domain(dom0_t, dm_usbvm_t)
++blktap_disk(dm_usbvm_t, dom0_t)
++make_device_model(dom0_t, dm_usbvm_t, usbvm_t)
++
++# Both of these domain types can be created using the default (system) role
++role system_r types { usbvm_t dm_usbvm_t };
++
++argo_comms(dom0_t, usbvm_t)
++# SmartCard needs to talk argo to vscclient in usbvm
++argo_comms(dm_dom_t, usbvm_t)
++# vscclient listens on a wildcard ring.
++allow usbvm_t xen_t:argo register_any_source;

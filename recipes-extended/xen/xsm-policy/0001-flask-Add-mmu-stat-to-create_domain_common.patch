@@ -1,0 +1,29 @@
+From fcb24b455073079a69e1e6ebc9355e6d3c2176b6 Mon Sep 17 00:00:00 2001
+From: Jason Andryuk <jandryuk@gmail.com>
+Date: Fri, 20 Sep 2019 09:07:17 -0400
+Subject: [PATCH 01/26] flask: Add mmu stat to create_domain_common
+
+The domain builder needs to be able to run mmu stat when building a
+domain, so grant that permission.
+
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+---
+ tools/flask/policy/modules/xen.if | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/flask/policy/modules/xen.if b/tools/flask/policy/modules/xen.if
+index de5fb331bf..51939a4150 100644
+--- a/tools/flask/policy/modules/xen.if
++++ b/tools/flask/policy/modules/xen.if
+@@ -56,7 +56,7 @@ define(`create_domain_common', `
+ 			resource_map get_cpu_policy };
+ 	allow $1 $2:security check_context;
+ 	allow $1 $2:shadow enable;
+-	allow $1 $2:mmu { map_read map_write adjust memorymap physmap pinpage mmuext_op updatemp };
++	allow $1 $2:mmu { map_read map_write adjust memorymap physmap pinpage mmuext_op updatemp stat };
+ 	allow $1 $2:grant setup;
+ 	allow $1 $2:hvm { getparam hvmctl sethvmc
+ 			setparam nested altp2mhvm altp2mhvm_op dm };
+-- 
+2.21.0
+
