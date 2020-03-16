@@ -28,7 +28,7 @@ new file mode 100644
 index 0000000000..310855b6af
 --- /dev/null
 +++ b/tools/flask/policy/modules/ndvm.te
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,28 @@
 +# Domains of type nomigrate_t must be built via the nomigrate_t_building label;
 +# once built, dom0 cannot read their memory.
 +declare_domain(ndvm_t)
@@ -55,6 +55,8 @@ index 0000000000..310855b6af
 +domain_comms(domU_t, ndvm_t)
 +# as can it's stubdom
 +domain_comms(dm_dom_t, ndvm_t)
++
++pv_net(dom0_t, ndvm_t)
 -- 
 2.21.0
 
