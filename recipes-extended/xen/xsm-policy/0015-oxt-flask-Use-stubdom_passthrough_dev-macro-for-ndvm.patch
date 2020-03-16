@@ -14,13 +14,16 @@ diff --git a/tools/flask/policy/modules/nic_dev.te b/tools/flask/policy/modules/
 index 691b61c327..89a6e5a363 100644
 --- a/tools/flask/policy/modules/nic_dev.te
 +++ b/tools/flask/policy/modules/nic_dev.te
-@@ -15,5 +15,4 @@ type shared_irq_t, resource_type;
+@@ -15,5 +15,7 @@ type shared_irq_t, resource_type;
  
  gen_bool(shared_irq, true)
  
 -admin_device(dom0_t, nic_dev_t)
 -use_device_noiommu(domU_t, nic_dev_t)
 +stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, device_t)
++stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, ioport_t)
++stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, iomem_t)
++stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, irq_t)
 -- 
 2.21.0
 

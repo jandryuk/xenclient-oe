@@ -8,14 +8,18 @@
 +usbvm = on
 --- a/tools/flask/policy/modules/nic_dev.te
 +++ b/tools/flask/policy/modules/nic_dev.te
-@@ -23,2 +23,7 @@ type media_dev_t, resource_type;
- 
- stubdom_passthrough_device(dom0_t, dm_dom_t, domU_t, media_dev_t)
+@@ -19,3 +19,11 @@ stubdom_passthrough_device(dom0_t, dm_nd
+ stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, ioport_t)
+ stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, iomem_t)
+ stubdom_passthrough_device(dom0_t, dm_ndvm_t, ndvm_t, irq_t)
 +
 +# label USB controllers as usb_dev_t
 +type usb_dev_t, resource_type;
 +
 +stubdom_passthrough_device(dom0_t, dm_usbvm_t, usbvm_t, device_t)
++stubdom_passthrough_device(dom0_t, dm_usbvm_t, usbvm_t, ioport_t)
++stubdom_passthrough_device(dom0_t, dm_usbvm_t, usbvm_t, iomem_t)
++stubdom_passthrough_device(dom0_t, dm_usbvm_t, usbvm_t, irq_t)
 --- /dev/null
 +++ b/tools/flask/policy/modules/usbvm.te
 @@ -0,0 +1,20 @@
