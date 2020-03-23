@@ -53,3 +53,16 @@ SRC_URI[kernel.sha256sum] = "669a74f4aeef07645061081d9c05d23216245702b4095afb3d9
 
 # Backport for new file in 5.2+
 FILES_kernel-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
+
+do_make_scripts() {
+	unset CFLAGS CPPFLAGS CXXFLAGS LDFLAGS
+	make CC="${KERNEL_CC}" LD="${KERNEL_LD}" AR="${KERNEL_AR}" \
+		-C ${STAGING_KERNEL_DIR} O=${STAGING_KERNEL_BUILDDIR} scripts prepare
+}
+
+do_shared_workdir_append() {
+	if [ -x scripts/mod/modpost ]; then
+		mkdir -p ${kerneldir}/scripts/mod
+		cp scripts/mod/modpost ${kerneldir}/scripts/mod
+	fi
+}
