@@ -3,6 +3,7 @@ DESCRIPTION = "Linux kernel for OpenXT service VMs."
 # Use the one from meta-openembedded/meta-oe
 require recipes-kernel/linux/linux.inc
 require recipes-kernel/linux/linux-openxt.inc
+DEPENDS += "rsync-native"
 
 PV_MAJOR = "${@"${PV}".split('.', 3)[0]}"
 
@@ -18,7 +19,6 @@ SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v${PV_MAJOR}.x/linux-${PV}.tar.xz;n
     file://tpm-log-didvid.patch \
     file://blktap2.patch \
     file://export-for-xenfb2.patch \
-    file://allow-service-vms.patch \
     file://intel-amt-support.patch \
     file://disable-csum-xennet.patch \
     file://pci-pt-move-unaligned-resources.patch \
@@ -48,5 +48,8 @@ SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v${PV_MAJOR}.x/linux-${PV}.tar.xz;n
     "
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
-SRC_URI[kernel.md5sum] = "bf96b6783a2d11178a2aaa3cf376f975"
-SRC_URI[kernel.sha256sum] = "293ec1ae0f6b3b4be83a217224b51d137f2163cf2d9d294eecf5d0a354e4e29d"
+SRC_URI[kernel.md5sum] = "f1ae5618270676470e6b2706c61d909b"
+SRC_URI[kernel.sha256sum] = "669a74f4aeef07645061081d9c05d23216245702b4095afb3d957f79098f0daf"
+
+# Backport for new file in 5.2+
+FILES_kernel-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
