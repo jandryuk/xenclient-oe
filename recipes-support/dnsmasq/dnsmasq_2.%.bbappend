@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/patches:"
 SRC_URI += " \
     file://dnsmasq_dnsout_interface.patch;patch=1 \
+    file://Fix-build-after-y2038-changes-in-glib.patch \
 "
 
 # we don't want all the "goodies" in dnsmasq package,
