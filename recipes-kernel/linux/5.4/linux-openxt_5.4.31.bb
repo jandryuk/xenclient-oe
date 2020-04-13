@@ -48,8 +48,8 @@ SRC_URI += "${KERNELORG_MIRROR}/linux/kernel/v${PV_MAJOR}.x/linux-${PV}.tar.xz;n
     "
 
 LIC_FILES_CHKSUM = "file://COPYING;md5=bbea815ee2795b2f4230826c0c6b8814"
-SRC_URI[kernel.md5sum] = "f1ae5618270676470e6b2706c61d909b"
-SRC_URI[kernel.sha256sum] = "669a74f4aeef07645061081d9c05d23216245702b4095afb3d957f79098f0daf"
+SRC_URI[kernel.md5sum] = "72b09e068b4cb9a5aa24381ba9eb6a07"
+SRC_URI[kernel.sha256sum] = "a11083f8f809887f6a0f8d4467532385b99418f17998fe6e837807491c276eeb"
 
 # Backport for new file in 5.2+
 FILES_kernel-base += "${nonarch_base_libdir}/modules/${KERNEL_VERSION}/modules.builtin.modinfo"
