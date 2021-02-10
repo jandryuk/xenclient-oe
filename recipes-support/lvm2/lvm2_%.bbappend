@@ -22,16 +22,6 @@ do_install_append() {
     install -m 0644 ${WORKDIR}/volatiles.99_cryptsetup ${D}${sysconfdir}/default/volatiles/99_cryptsetup
 }
 
-PACKAGES =+ "${PN}-conf"
-RRECOMMENDS_${PN}_append += "${PN}-conf"
-
-FILES_${PN}-conf = " \
-    ${sysconfdir}/lvm/lvm.conf \
-"
-CONFFILES_${PN}-conf = " \
-    ${sysconfdir}/lvm/lvm.conf \
-"
-
 FILES_${PN} += " \
     ${sysconfdir}/default/volatiles \
 "
